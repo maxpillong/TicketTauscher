@@ -32,11 +32,11 @@
 	}
 	
 	#preload03 {
-        background:url('gfx/final_get_hover.jpg');width:0px;height:0px
+        background:url('gfx/final_get_hover.png');width:0px;height:0px
 	}
 	
 	#preload04 {
-        background:url('gfx/final_offer_hover.jpg');width:0px;height:0px
+        background:url('gfx/final_offer_hover.png');width:0px;height:0px
 	}
 	
 	#content {
@@ -80,11 +80,12 @@
     }
 	
 	<?php 
+	$ini = parse_ini_file('app.ini');
 				//DB Setup
-				$db_server = 'rdbms.strato.de';
-				$db_user = 'U3175428';
-				$db_pw = 'Hellskotter069';
-				$db_name = 'DB3175428';
+				$db_server = $ini['db_server'];
+				$db_user = $ini['db_user'];
+				$db_pw = $ini['db_password'];
+				$db_name = $ini['db_name'];
 				$connection = mysqli_connect($db_server, $db_user, $db_pw) or die(mysql_error()); //Connect to server
 				mysqli_query($connection, "SET NAMES 'utf8'");
 				$selected_db = mysqli_select_db($connection, $db_name) or die("Cannot connect to database"); //Connect to database
@@ -267,8 +268,9 @@
 							<td width=300px>DEIN NAME?</td>
 							<td width=300px><select name='owner'>
 							<option selected='selected' value=\"owner1\">Bitte w&auml;hlen ...</option>";
-							while ($row = $usernames->fetch_assoc()){
-								echo "<option value=\"owner1\">" . $row['name'] . "</option>";
+							while ($userrows = $usernames->fetch_assoc()){
+								echo "<option value=\"owner1\">" . $userrows['name'] . "</option>
+								";
 							}
 							echo "</select>
 							</td>
@@ -279,7 +281,7 @@
 					<table border=0 width=550px>
 						<tr>
 							<td align='right'>
-								<img src='gfx/button_get.jpg'>
+								<img src='gfx/final_get.png'>
 							</td>
 						</tr>
 					</table>
@@ -330,7 +332,7 @@
 					<table border=0 width=550px>
 						<tr>
 							<td align='right'>
-								<img src='gfx/button_offer.jpg'>
+								<img src='gfx/final_offer.png'>
 							</td>
 						</tr>
 					</table>
