@@ -237,6 +237,8 @@
 				$usernames = mysqli_query($connection, "SELECT name FROM users;");
 				$sql = mysqli_query($connection, "SELECT matches.match_id, matches.date, matches.time, opponents.name FROM matches INNER JOIN opponents ON matches.opponent = opponents.opponent_id WHERE date >= CURDATE() ORDER BY date LIMIT 3");
 				while ($row = $sql->fetch_assoc()){
+					$ticketnames = mysqli_query($connection, "SELECT ticket_id, name FROM tickets;");
+					$usernames = mysqli_query($connection, "SELECT name FROM users;");
 					//Individual ticket request dialogue box
 					echo "<div id='tr_" . $row['match_id'] . "' class='white_content'><center>
 					<center><p><img src='gfx/bar.png'></p>
@@ -321,7 +323,8 @@
 							<td width=300px><select name='owner'>
 							<option selected='selected' value=\"owner1\">Bitte w&auml;hlen ...</option>";
 							while ($row = $ticketnames->fetch_assoc()){
-								echo "<option value=\"owner1\">" . $row['name'] . "</option>";
+								echo "<option value=\"owner1\">" . $row['name'] . "</option>
+								";
 							}
 							echo "</select>
 							</td>
