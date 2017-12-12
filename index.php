@@ -7,6 +7,11 @@
 	<meta name="author" content="K^3 - kubic design - Jörn Klein, Max Pillong, Sebastian Witt">
 	<style type="text/css">
 	
+	#test {
+border: solid 2px black;
+width: 0px;
+}
+
 	a:link{text-decoration:none;color:#606060}
 	a:visited{text-decoration:none;color:#606060}
 	a:hover{text-decoration:none;color:#606060}
@@ -42,7 +47,7 @@
 	#content {
 		font-family: myfont;
 		background-image: url('gfx/bgcontent.png');
-		height:100%;
+		height:max-height;
 		width:950px;
 		margin: 0 auto;
 		font-family: myfont;
@@ -137,7 +142,27 @@
 	#buttonoffer:hover {
 		background-image: url('gfx/button_offer_hover.jpg');
 	}
-
+	
+	#finalget {
+		background-image: url('gfx/final_get.png');
+		height: 39px;
+		width: 305px;
+	}
+	
+	#finalget:hover {
+		background-image: url('gfx/final_get_hover.png');
+	}
+	
+	#finaloffer {
+		background-image: url('gfx/final_offer.png');
+		height: 39px;
+		width: 272px;
+	}
+	
+	#finaloffer:hover {
+		background-image: url('gfx/final_offer_hover.png');
+	}
+	
 	</style>
 	<title>EFC Kotter Ticket Tauscher 2000</title>
 	</head>
@@ -160,6 +185,22 @@
 	<table style="border-spacing:35px;">
 		<tr>
 			<?php 
+				function getTicket($indStatus, $indMatchid, $indUserid, $ext){
+					if ($indStatus=0){
+						$sql = "SELECT exch_id FROM exchanges WHERE match_id = " . $indMatchid . " AND user_id IS NULL ORDER BY created LIMIT 1";
+						$result = mysqli_query($connection, $sql);
+						$value = mysql_fetch_object($result);
+						$nextExchange = $value->exch_id;
+						$sql = mysqli_query($connection, "UPDATE exchanges SET pers_id=" . $indUserid . " WHERE exch_id = " . $nextExchange . ";");
+					}
+					else {
+						$sql = mysqli_query($connection, "INSERT INTO exchanges (match_id, ticket_id, pers_id, created, ext) VALUES (" . $indMatchid . ",NULL," . $indUserid . ",NOW()," . $ext . ")");
+					}
+					return $indStatus;
+				}
+				function giveTicket($status, $matchid, $ticketid){
+					return $status;
+				}
 				//Query to determine upcoming matches
 				$sql = mysqli_query($connection, "SELECT matches.match_id, matches.date, opponents.name, opponents.tile, matches.time, matches.opponent, matches.type_id FROM matches INNER JOIN opponents ON matches.opponent = opponents.opponent_id WHERE date >= CURDATE() ORDER BY date LIMIT 3");
 				while ($row = $sql->fetch_assoc()){
@@ -238,7 +279,7 @@
 				$sql = mysqli_query($connection, "SELECT matches.match_id, matches.date, matches.time, opponents.name FROM matches INNER JOIN opponents ON matches.opponent = opponents.opponent_id WHERE date >= CURDATE() ORDER BY date LIMIT 3");
 				while ($row = $sql->fetch_assoc()){
 					$ticketnames = mysqli_query($connection, "SELECT ticket_id, name FROM tickets;");
-					$usernames = mysqli_query($connection, "SELECT name FROM users;");
+					$usernames = mysqli_query($connection, "SELECT name FROM users ORDER BY name;");
 					//Individual ticket request dialogue box
 					echo "<div id='tr_" . $row['match_id'] . "' class='white_content'><center>
 					<center><p><img src='gfx/bar.png'></p>
@@ -246,7 +287,7 @@
 						<tr>
 							<td width=50px></td>
 							<td width=*><p><font size=6><center><i>ICH WILL HIN!</i></center></font></p></td>
-							<td width=50px><a href='javascript:void(0)' onclick = \"document.getElementById('tr_" . $row['match_id'] . "').style.display='none';document.getElementById('fade').style.display='none'\"><font style='font-size:40px;color:#808080;'>[X]</font></a></td>
+							<td width=50px><a href='javascript:void(0)' onclick = \"document.getElementById('tr_" . $row['match_id'] . "').style.display='none';document.getElementById('fade').style.display='none'\"><img src='gfx/x.png'></a></td>
 						</tr>
 					</table>
 					<p><img src='gfx/bar.png'></p>
@@ -283,7 +324,7 @@
 					<table border=0 width=550px>
 						<tr>
 							<td align='right'>
-								<img src='gfx/final_get.png'>
+								<div id='finalget'></div>
 							</td>
 						</tr>
 					</table>
@@ -298,7 +339,7 @@
 						<tr>
 							<td width=50px></td>
 							<td width=*><p><font size=6><center><i>BIETE KARTE</i></center></font></p></td>
-							<td width=50px><a href='javascript:void(0)' onclick = \"document.getElementById('to_" . $row['match_id'] . "').style.display='none';document.getElementById('fade').style.display='none'\"><font style='font-size:40px;color:#808080;'>[X]</font></a></td>
+							<td width=50px><a href='javascript:void(0)' onclick = \"document.getElementById('to_" . $row['match_id'] . "').style.display='none';document.getElementById('fade').style.display='none'\"><img src='gfx/x.png'></a></td>
 						</tr>
 					</table>
 					<p><img src='gfx/bar.png'></p>
@@ -335,7 +376,7 @@
 					<table border=0 width=550px>
 						<tr>
 							<td align='right'>
-								<img src='gfx/final_offer.png'>
+								<div id='finaloffer'></div>
 							</td>
 						</tr>
 					</table>
